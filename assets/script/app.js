@@ -352,12 +352,51 @@ function checkCollisions() {
 
 				//Add score
 				score += 100;
+
+				//Add an explosion
+				explosions.push({
+					pos: pos,
+					sprite: new Sprite('img/sprites.png', 
+									   [0, 117],
+									   [39, 39],
+									   16,
+									   [0,1,2,3,4,5,6,7,8,9,10,11,12],
+									   null,
+									   true)
+				});
+
+				//Remove the bullet and stop this iteration
+				bullets.splice(j, 1);
+				break;
 			}
+		}
+
+		if (boxCollides(pos, size, player.pos, player.sprite.size)) {
+			gameOver();
 		}
 	}
 }
 
+function checkPlayerBounds() {
+	//Check bounds
+	if (player.pos[0] < 0) {
+		player.pos[0] = 0;
+	}
+	else if (player.pos[0] > canvas.width - player.sprite.size[0]) {
+		player.pos[0] = canvas.width - player.sprite.size[0];
+	}
 
+	if (player.pos[1] < 0) {
+		player.pos[1] = 0;
+	}
 
+	else if (player.pos[1] > canvas.height - player.sprite.size[1]) {
+		player.pos[1] = canvas.height - player.sprite.size[1];
+	}
+}
+
+function render() {
+	
+}
 
 
