@@ -290,10 +290,72 @@ function updateEntities(dt) {
 		}
 
 		//Remove the bullet if it goes of screen
-		
+		if (bullet.pos[1] < 0 || bullet.pos[1] > canvas.height || bullet.pos[0] > canvas.width) {
+			bullets.splice(i, 1);
+			i--;
+		}
+	}
+
+	//Update all the enemies
+	for (var i = 0; i < enemies.length; i++) {
+		enemies[i].pos[0] -= enemySpeed * dt;
+		enemies[i].sprite.update(dt);
+
+		//Remove if offscreen
+		if (enemies.pos[0] + enemies[i].sprite.size[0] < 0) {
+			enemies.splice(i, 1);
+			i--;
+		}
+	}
+
+	//Update all of the explosions
+	for (var i = 0; i < explosions.length; i++) {
+		explosions[i].sprite.update(dt);
+
+		//Remove if animation is done
+		if (explosions[i].sprite.done) {
+			explosions.splice(i, 1);
+			i--;
+		}
 	}
 }
 
+function collides(x, y, r, b, x2, y2, r2, b2) {
+	return !(r <= x2 || x > r2|| 
+			 b <= y2 || y > b2);
+}
+
+function boxCollides(pos, size, pos2, size2) {
+	return collides(pos[0], pos[1],
+                    pos[0] + size[0], pos[1] + size[1],
+                    pos2[0], pos2[1],
+                    pos2[0] + size2[0], pos2[1] + size2[1]);
+}
+
+function checkCollisions() {
+	checkPlayerBounds();
+
+	//Run collision detection for all enemies and bullets
+
+	for (var i = 0; i < enemies.length; i++) {
+		var pos = enemies[i].pos;
+		var size = enemies[i].sprite.size;
+
+		for (var j = 0; j < bullets.length; j++) {
+			var pos2 = bullets[j];
+			var size2 = bullets[j].sprite.size;
+
+			if (boxCollides(pos, size, pos2, size2)) {
+				//Remove the enemy
+				enemies.splice(i, 1);
+				i--;
+
+				//Add score
+				score += 100;
+			}
+		}
+	}
+}
 
 
 
