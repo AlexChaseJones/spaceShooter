@@ -80,14 +80,14 @@ function main() {
 })();
 
 resources.load([
-	'images/sprites.png',
-	'images/terrain.png'
+	'assets/img/sprites.png',
+	'assets/img/terrain.png'
 ]);
 
 resources.onReady(init);
 
 function init() {
-	terrainPattern = ctx.createPattern(resources.get('images/terrain.png'), 'repeat');
+	terrainPattern = ctx.createPattern(resources.get('assets/img/terrain.png'), 'repeat');
 	document.getElementById('play-again').addEventListener('click', function(){
 		reset();
 	});
@@ -396,7 +396,57 @@ function checkPlayerBounds() {
 }
 
 function render() {
-	
+	ctx.fillStyle = terrainPattern;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	//Render the player if the game isn't over
+	if (!isGameOver) {
+		renderEntity(player);
+	}
+
+	renderEntities(bullets);
+	renderEntities(enemies);
+	renderEntities(explosions);
+};
+
+function renderEntities(list) {
+	for (var i = 0; i < list.length; i++) {
+		renderEntitiy(list[i]);
+	}
 }
+
+function renderEntity(entity) {
+	ctx.save();
+	ctx.translate(entity.pos[0], entity.pos[1]);
+	entity.sprite.render(ctx);
+	ctx.restore();
+}
+
+//Game over
+function gameOver() {
+	document.getElementById('game-over').style.display = 'block';
+	document.getElementById('game-over-overlay').style.display = 'block';
+	isGameOver = true;
+}
+
+//Reset game to original state
+function reset() {
+	document.getElementById('game-over').style.display = 'none';
+	document.getElementById('game-over-overlay').style.display = 'none';
+	isGameOver = false;
+	gameTime = 0;
+	score = 0;
+
+	enemies = [];
+	bullets = [];
+
+	player.pos = [50, canvas.height / 2];
+}
+
+
+
+
+
+
 
 
